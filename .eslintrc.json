@@ -47,7 +47,7 @@
         "eol-last": ["warn", "always"],
         "no-use-before-define": ["error"],
         "func-call-spacing": ["error", "never"],
-        "function-paren-newline": ["error", "never"],
+        "function-paren-newline": ["error", "multiline"],
         "indent": ["error", 4],
         "keyword-spacing": ["warn", {"before": true, "after": true}],
         "linebreak-style": ["error", "unix"],
