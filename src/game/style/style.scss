@@ -1,7 +1,24 @@
-body {
-    background: red;
+html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-    canvas#canvas {
-        background: blue;
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    .canvas-container {
+        margin: auto;
+        margin-top: 25px;
+        width: 1024px;
+        height: 576px;
+        border: 1px solid black;
+        canvas#canvas {
+            display: block;
+        }
     }
 }
