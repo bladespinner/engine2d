@@ -22,6 +22,7 @@ function contextDraw(context, cb, x, y) {
  */
 function rectangle(context, options) {
     contextDraw(context, () => {
+        context.beginPath();
         context.rect(0, 0, options.width, options.height);
     }, -options.width / 2, -options.height / 2);
 }
@@ -47,6 +48,7 @@ function square(context, options) {
  */
 function circle(context, options) {
     contextDraw(context, () => {
+        context.beginPath();
         context.arc(0, 0, options.radius, 0, Math.PI * 2, false);
     }, -options.radius / 2, -options.radius / 2);
 }
