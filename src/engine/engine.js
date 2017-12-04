@@ -2,6 +2,7 @@
 
 import { Frame } from './frame';
 import { Drawable } from './drawable';
+import { Scheduler } from './scheduler';
 
 /**
  * Animation engine class
@@ -9,21 +10,26 @@ import { Drawable } from './drawable';
 class Engine {
     /**
      * Construct a new Engine
-     * @param {CanvasRenderingContext2D} context An canvas rendering context
+     * @param {Scheduler} sheduler Animation rendering sheduler
      */
-    constructor(context) {
-        this._running = false;
-        this._context = context;
-        this._renderSpeed = 1;
-        /**
-         * @type {Frame}
-         */
-        this._currentFrame = null;
+    constructor(sheduler) {
         /**
          * @type {Drawable[]}
          */
         this._drawables = [];
+
+        this._sheduler = sheduler;
+        this._sheduler.addAction(this.redraw.bind(this));
+
+        this.start = sheduler.start.bind(sheduler);
+        this.stop = sheduler.stop.bind(sheduler);
+        this.pause = sheduler.pause.bind(sheduler);
+
+        this.isRunning = () => sheduler.isRunning;
+        this.isStopped = () => sheduler.isStopped;
+        this.isPaused = () => sheduler.isPaused;
     }
+
     /**
      * Redraw all drawables
      * @param {Frame} prevFrame Current animation frame
@@ -34,54 +40,35 @@ class Engine {
         this._drawables.forEach(drawable =>
             drawable.draw(prevFrame, curFrame));
     }
+
     /**
-     * The main draw loop, runs while running is true.
-     * @param {Frame} prevFrame Last animation frame.
-     * @returns {void}
+     * Add a new drawable object to the back of the drawing list
+     * @param {Drawable} drawable A drawable object.
+     * @returns {Promise<void>} A promise resolved when the drawable ends and is
+     * removed from the drawables list
      */
-    loop() {
-        if (!this.running) {
-            return;
-        }
+    pushDrawable(drawable) {
+        this._drawables.push(drawable);
 
-        var prevFrame = this._currentFrame;
-
-        var frame = new Frame(this._context);
-
-        if (!prevFrame) {
-            prevFrame = frame;
-        }
-
-        this.redraw(prevFrame, frame);
-
-        this._currentRequestedFrameId =
-            window.requestAnimationFrame(this.loop.bind(this));
+        return drawable.end.then(() => {
+            var idx = this._drawables.indexOf(drawable);
+            this._drawables.splice(idx, 1);
+        });
     }
 
     /**
-     * Start the engine
-     * @returns {void}
+     * Add a new drawable object to the back of the drawing list
+     * @param {Drawable} drawable A drawable object.
+     * @returns {Promise<void>} A promise resolved when the drawable ends and is
+     * removed from the drawables list
      */
-    start() {
-        this.running = true;
-        this.loop();
-    }
+    unshiftDrawable(drawable) {
+        this._drawables.unshift(drawable);
 
-    /**
-     * Stop the engine
-     * @returns {void}
-     */
-    stop() {
-        this.running = false;
-        this._currentFrame = null;
-    }
-
-    /**
-     * Is the engine currently running
-     * @returns {Boolean} returns if the engine is currently running.
-     */
-    isRunning() {
-        return this._running;
+        return drawable.end.then(() => {
+            var idx = this._drawables.indexOf(drawable);
+            this._drawables.splice(idx, 1);
+        });
     }
 }
 

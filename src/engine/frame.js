@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * A animation frame, containing the creation timestamp
  * and a reference to the context
