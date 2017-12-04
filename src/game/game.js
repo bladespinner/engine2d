@@ -1,7 +1,9 @@
 import { AnimationFrameScheduler } from '../engine/scheduler';
 import { Engine } from '../engine/engine';
 import { Drawable } from '../engine/drawable';
+import { Animation } from '../engine/animation';
 import { Point } from '../math/point';
+import { cubicBezier } from '../math/easing_functions';
 import * as shapes from '../drawingPrimitives/shapes';
 
 import { FpsMeter } from './drawables/fpsMeter';
@@ -24,6 +26,42 @@ function cirleDrawable() {
         ctx.fillStyle = '#e8e8e8';
         shapes.circle(ctx, { radius: 15 });
     });
+}
+
+/**
+ * @returns {void}
+ */
+function moveAnimation() {
+    var xStart = 15;
+    var yStart = 400;
+    var xEnd = 700;
+    var yEnd = 56;
+
+    var drawable = cirleDrawable();
+
+    var anim = new Animation(
+        new Point(0, 0),
+        function (prevFrame, curFrame) {
+            var x = this.animate(xStart, xEnd);
+            var y = this.animate(yStart, yEnd);
+
+            drawable.position = new Point(x, y);
+            drawable.draw(prevFrame, curFrame);
+        }, 1000, {
+            loop: true,
+            alternate: true,
+            easing: cubicBezier()
+        }
+    );
+
+    var originalInitialization = anim.initialize.bind(anim);
+
+    anim.initialize = function (curFrame) {
+        originalInitialization(curFrame);
+        drawable.initialize(curFrame);
+    };
+
+    return anim;
 }
 
 /**
@@ -52,7 +90,7 @@ function startGame() {
     var engine = createEngine(context);
     engine.start();
     engine.pushDrawable(new Clear());
-    engine.pushDrawable(cirleDrawable());
+    engine.pushDrawable(moveAnimation());
     engine.pushDrawable(new FpsMeter(new Point(20, 20)));
 }
 
