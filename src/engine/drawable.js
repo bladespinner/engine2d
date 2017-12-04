@@ -10,11 +10,15 @@ class Drawable {
     /**
      * Construct a new drawable.
      * @param {Point} position The location at which the drawable should.
-     * @param {function(Frame, Frame, Drawable):void} render Drawable rendering
+     * @param {function(Frame, Frame):void} render Drawable rendering
      * function.
      */
     constructor(position, render) {
         this.position = position;
+
+        /**
+         * @this {Drawable}
+         */
         this.render = render;
 
         /**
@@ -37,10 +41,8 @@ class Drawable {
 
         ctx.save();
         ctx.translate(this.position.x, this.position.y);
-        this.render(prevFrame, curFrame, this);
+        this.render.bind(this)(prevFrame, curFrame);
         ctx.restore();
-
-        throw 'draw() Not Implemented for this Drawable.';
     }
 }
 
