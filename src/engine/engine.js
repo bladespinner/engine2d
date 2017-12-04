@@ -19,15 +19,34 @@ class Engine {
         this._drawables = [];
 
         this._sheduler = sheduler;
+
+        this.initialize();
         this._sheduler.addAction(this.redraw.bind(this));
 
         this.start = sheduler.start.bind(sheduler);
-        this.stop = sheduler.stop.bind(sheduler);
+        this.stop = () => {
+            sheduler.stop();
+            this.initialize();
+        };
         this.pause = sheduler.pause.bind(sheduler);
 
         this.isRunning = () => sheduler.isRunning;
         this.isStopped = () => sheduler.isStopped;
         this.isPaused = () => sheduler.isPaused;
+    }
+
+    /**
+     * Initialize engine starter
+     * @returns {void}
+     */
+    initialize() {
+        var startActionId = null;
+
+        this.started = new Promise(resolve => {
+            startActionId = this._sheduler.addAction(() => resolve());
+        }).then(() => {
+            this._sheduler.removeAction(startActionId);
+        });
     }
 
     /**
@@ -48,11 +67,16 @@ class Engine {
      * removed from the drawables list
      */
     pushDrawable(drawable) {
-        this._drawables.push(drawable);
+        this.started.then(() => {
+            var curFrame = this._sheduler.currentFrame;
 
-        return drawable.end.then(() => {
-            var idx = this._drawables.indexOf(drawable);
-            this._drawables.splice(idx, 1);
+            this._drawables.push(drawable);
+            drawable.initialize(curFrame);
+
+            return drawable.end.then(() => {
+                var idx = this._drawables.indexOf(drawable);
+                this._drawables.splice(idx, 1);
+            });
         });
     }
 

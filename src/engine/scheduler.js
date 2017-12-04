@@ -20,6 +20,11 @@ class Scheduler {
         this._context = context;
         this._actions = {};
         this._runState = RUNSTATE.STOPPED;
+        /**
+         * @type {Frame}
+         */
+        this._currentFrame = null;
+        this._actionIdSequence = 0;
     }
     /**
      * @param {function(Frame, Frame):void} action Sheduled action.
@@ -39,6 +44,10 @@ class Scheduler {
      */
     removeAction(actionId) {
         delete this._actions[actionId];
+    }
+
+    get currentFrame() {
+        return this._currentFrame;
     }
 
     /**

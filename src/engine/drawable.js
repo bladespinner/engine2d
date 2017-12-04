@@ -30,6 +30,16 @@ class Drawable {
             this.interrupt = reject;
         });
     }
+
+    /**
+     * Initialize the rendering of the drawable
+     * @param {Frame} curFrame Current animation frame
+     * @returns {void}
+     */
+    initialize(curFrame) {
+        this.startingFrame = curFrame;
+    }
+
     /**
      * Draw the drawable
      * @param {Frame} prevFrame previous animation frame.
