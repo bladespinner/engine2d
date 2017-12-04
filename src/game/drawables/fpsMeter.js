@@ -22,13 +22,13 @@ class FpsMeter extends Drawable {
                 curFps++;
             } else {
                 window = now;
-                runningAvgFps = Math.floor((runningAvgFps + curFps) / 2);
+                runningAvgFps = (runningAvgFps + curFps) / 2;
                 curFps = 1;
             }
 
             var ctx = curFrame.context;
             ctx.font = '15px Arial';
-            text(ctx, { text: `FPS: ${runningAvgFps}` });
+            text(ctx, { text: `FPS: ${Math.floor(runningAvgFps)}` });
         });
     }
 }
