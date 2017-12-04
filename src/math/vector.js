@@ -17,15 +17,6 @@ class Vector extends NumberTuple {
     }
 
     /**
-     * Scale this vector by a number factor.
-     * @param {Number} factor the number factor.
-     * @returns {Vector} a new scaled vector.
-     */
-    scale(factor) {
-        return new Vector(this.x * factor, this.y * factor);
-    }
-
-    /**
      * Get a vector perpendicular to this one
      * @returns {Vector} a vector perpendicular to this one with the same length
      */

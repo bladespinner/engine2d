@@ -28,6 +28,15 @@ class NumberTuple {
     }
 
     /**
+     * Scale this vector by a number factor.
+     * @param {Number} factor the number factor.
+     * @returns {NumberTuple} a new scaled vector.
+     */
+    scale(factor) {
+        return new this.constructor(this.x * factor, this.y * factor);
+    }
+
+    /**
      * Substract another number tuple from this one, returning a new tuple.
      * @param {NumberTuple} tuple Another NumberTuple.
      * @returns {NumberTuple} A new number tuple, the sum of this and the
