@@ -1,7 +1,7 @@
 # Engine
 
-1. Add initialization function to Drawables, which is called on engine add.
-2. Finish animation definition, looping animations 
+1. Add initialization function to Drawables, which is called on engine add. +
+2. Finish animation definition, looping animations +
 
 # Building Blocks
 
