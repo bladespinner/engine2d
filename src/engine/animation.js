@@ -4,8 +4,11 @@
 import { Drawable } from './drawable';
 import { linear } from '../math/easing_functions';
 
+
 /**
- * Drawable class
+ * Animation class
+ * @typedef {function(Number):Number} EasingFn
+ * @typedef {{loop: Boolean, alternate: Boolean, easing: EasingFn}} AnimOptions
  */
 class Animation extends Drawable {
     /**
@@ -13,7 +16,7 @@ class Animation extends Drawable {
      * @param {Point} position The location at which the drawable should.
      * @param {function(Frame, Frame, Drawable):void} render Drawable rendering
      * @param {Number} length Time in miliseconds the animation lasts
-     * @param {{loop: Boolean, alternate: Boolean, easing: function(Number):Number}} options Animation options
+     * @param {AnimOptions} options Animation options
      * function.
      */
     constructor(position, render, length, options = {
@@ -55,9 +58,8 @@ class Animation extends Drawable {
             }
         } else if (this._offset >= 1) {
             this.finish();
-            if (this._offset == 1) {
-                super.draw(prevFrame, curFrame);
-            }
+            this._offset = 1;
+            super.draw(prevFrame, curFrame);
             return;
         }
 
