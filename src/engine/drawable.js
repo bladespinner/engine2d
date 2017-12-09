@@ -40,6 +40,15 @@ class Drawable {
         this.startingFrame = curFrame;
     }
 
+    reset(curFrame) {
+        this.initialize(curFrame);
+
+        this.end = new Promise((resolve, reject) => {
+            this.finish = resolve;
+            this.interrupt = reject;
+        });
+    }
+
     /**
      * Draw the drawable
      * @param {Frame} prevFrame previous animation frame.
