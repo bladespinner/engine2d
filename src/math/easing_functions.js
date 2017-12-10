@@ -1,9 +1,10 @@
 'use strict';
 
 import { Point } from './point';
+import { BezierCurve } from './bezier_curve';
 
 /**
- * Linear scaling
+ * Linear easing
  * @param {Number} t Value to be transformed
  * @returns {Number} Transformed value
  */
@@ -12,22 +13,52 @@ function linear(t) {
 }
 
 /**
- * Cubic bezier scaling function
+ * Bezier easing function
+ * @returns {function(Number):Number} Bezier curve easing function
+ */
+function bezier() {
+    var controlPoints = Array.prototype.slice.call(arguments);
+
+    var start = new Point(0, 0);
+    var end = new Point(1, 1);
+    var copy = controlPoints.slice();
+
+    copy.unshift(start);
+    copy.push(end);
+
+    var curve = new BezierCurve(copy);
+    var fn = curve.getFunction();
+
+    return t => fn(t).x;
+}
+
+/**
+ * Cubic bezier easing function
  * @param {Point} p1 First bezier control point
  * @param {Point} p2 Second bezier control point
  * @returns {function(Number):Number} Easing cubic bezier function
  */
 function cubicBezier(p1 = new Point(0, 1), p2 = new Point(1, 0)) {
-    var p0 = new Point(0, 0);
-    var p3 = new Point(1, 1);
-
-    return t => {
-        var revT = 1 - t;
-        return p0.scale(revT * revT * revT)
-            .add(p1.scale(3 * revT * revT * t))
-            .add(p2.scale(3 * revT * t * t))
-            .add(p3.scale(t * t * t)).x;
-    };
+    return bezier(p1, p2);
 }
 
-export { linear, cubicBezier };
+/**
+ * Sum easing functions
+ * @param {function(Number):Number} fn1 easing function
+ * @param {function(Number):Number} fn2 easing function
+ * @returns {function(Number):Number} easing function
+ */
+function sumEasing(fn1, fn2) {
+    return t => (fn1(t) + fn2(t)) / 2;
+}
+
+/**
+ * Get the 1 - t of an easing function
+ * @param {function(Number):Number} fn easing function
+ * @returns {function(Number):Number} easing function
+ */
+function negativeEasing(fn) {
+    return t => 1 - fn(t);
+}
+
+export { linear, bezier, cubicBezier, sumEasing, negativeEasing };
