@@ -72,7 +72,7 @@
         "quote-props": ["warn", "consistent-as-needed"],
         "quotes": ["error", "single", { "allowTemplateLiterals": true }],
         "require-jsdoc": ["warn"],
-        "semi-spacing": ["warn", {"before": false, "after": false}],
+        "semi-spacing": ["warn", {"before": false, "after": true}],
         "space-before-blocks": ["warn", "always"],
         "space-before-function-paren": ["warn", {"anonymous": "always", "named": "never", "asyncArrow": "always"}],
         "space-in-parens": ["warn", "never"],
