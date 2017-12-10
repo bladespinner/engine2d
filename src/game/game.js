@@ -4,7 +4,7 @@ import { Drawable } from '../engine/drawable';
 import { Animation } from '../engine/animation';
 import { Point } from '../math/point';
 import { cubicBezier, linear } from '../math/easing_functions';
-import { moveAnimation } from '../engine/simple_animations';
+import { moveAnimation, circleAnimation, arcAnimation, bezierAnimation } from '../engine/simple_animations';
 import { DrawableGroup, DrawableLoop } from '../engine/higher_order_drawables';
 import * as shapes from '../drawingPrimitives/shapes';
 
@@ -16,11 +16,10 @@ import rarePepe from './assets/Rare-Pepe-Illuminati.png';
 
 /**
  * Circle rendering drawable
+ * @param {Point} position aaa
  * @returns {Drawable} drawable which renders a static circle
  */
-function cirleDrawable() {
-    var position = new Point(0, 0);
-
+function cirleDrawable(position = new Point(0, 0)) {
     return new Drawable(position, (prevFrame, curFrame) => {
         var ctx = curFrame.context;
         ctx.strokeStyle = '#44aa44';
@@ -32,11 +31,10 @@ function cirleDrawable() {
 
 /**
  * Draws a square
+ * @param {Point} position aaa
  * @returns {Drawable} drawable
  */
-function squareDrawable() {
-    var position = new Point(0, 0);
-
+function squareDrawable(position = new Point(0, 0)) {
     return new Drawable(position, (prevFrame, curFrame) => {
         var ctx = curFrame.context;
         ctx.strokeStyle = '#44aa44';
@@ -107,8 +105,11 @@ function startGame() {
     var context = canvasElement.getContext('2d');
     var engine = createEngine(context);
 
-    var circle = cirleDrawable();
+    var circle = squareDrawable();
     var fpsMeter = new FpsMeter(new Point(20, 20));
+
+    var start = squareDrawable(new Point(-100, 0));
+    var end = squareDrawable(new Point(100, 0));
 
     // var movingCircle = moveAnimation(circle, 1000, {
     //     from: new Point(20, 20),
@@ -139,49 +140,100 @@ function startGame() {
     //     easing: linear
     // });
 
-    var move1 = moveAnimation(circle, 333, {
-        from: new Point(-25, -25),
-        to: new Point(25, -25)
-    }, {
-        loop: false,
-        alternate: false,
-        easing: linear
-    });
+    // circle = circleAnimation(circle, 1000, { radius: 35 }, {
+    //     loop: true,
+    //     alternate: false,
+    //     easing: linear
+    // });
 
-    var move2 = moveAnimation(circle, 333, {
-        from: new Point(25, -25),
-        to: new Point(0, 40)
-    }, {
-        loop: false,
-        alternate: true,
-        easing: linear
-    });
+    // circle = bezierAnimation(circle, 4000, {
+    //     points: [
+    //         new Point(100, 100),
+    //         new Point(100, 500),
+    //         new Point(700, 333),
+    //         new Point(111, 553),
+    //         new Point(999, 115),
+    //         new Point(10, 10),
+    //         new Point(555, 666),
+    //         new Point(1000, 100)
+    //     ]
+    // }, {
+    //     loop: true,
+    //     alternate: true,
+    //     easing: linear
+    // });
 
-    var move3 = moveAnimation(circle, 333, {
-        from: new Point(0, 40),
-        to: new Point(-25, -25)
-    }, {
-        loop: false,
-        alternate: true,
-        easing: linear
-    });
-
-    var chain = new DrawableLoop([move1, move2, move3]);
-
-    var move4 = moveAnimation(chain, 3370, {
-        from: new Point(0, 0),
-        to: new Point(1000, 300)
+    circle = arcAnimation(circle, 1000, {
+        radius: 60,
+        from: { angle: Math.PI * 1.5 },
+        to: { angle: Math.PI * 2.5 }
     }, {
         loop: true,
         alternate: true,
-        easing: linear
+        easing: cubicBezier()
     });
 
-    var grp = new DrawableGroup([chain], new Point(400, 250));
+    // circle = moveAnimation(circle, 10000, {
+    //     from: new Point(100, 100),
+    //     to: new Point(900, 100)
+    // }, {
+    //     loop: true,
+    //     alternate: true,
+    //     easing: cubicBezier()
+    // });
+
+    // circle = circleAnimation(circle, 900, {
+    //     radius: 35,
+    //     clockwise: false
+    // }, {
+    //     loop: true,
+    //     alternate: false,
+    //     easing: linear
+    // });
+
+    // var move1 = moveAnimation(circle, 333, {
+    //     from: new Point(-25, -25),
+    //     to: new Point(25, -25)
+    // }, {
+    //     loop: false,
+    //     alternate: false,
+    //     easing: linear
+    // });
+
+    // var move2 = moveAnimation(circle, 333, {
+    //     from: new Point(25, -25),
+    //     to: new Point(0, 40)
+    // }, {
+    //     loop: false,
+    //     alternate: true,
+    //     easing: linear
+    // });
+
+    // var move3 = moveAnimation(circle, 333, {
+    //     from: new Point(0, 40),
+    //     to: new Point(-25, -25)
+    // }, {
+    //     loop: false,
+    //     alternate: true,
+    //     easing: linear
+    // });
+
+    // var chain = new DrawableLoop([move1, move2, move3]);
+
+    // var move4 = moveAnimation(chain, 3370, {
+    //     from: new Point(0, 0),
+    //     to: new Point(1000, 300)
+    // }, {
+    //     loop: true,
+    //     alternate: true,
+    //     easing: linear
+    // });
+
+    var grp = new DrawableGroup([circle], new Point(400, 300));
 
     engine.start();
     engine.pushDrawable(new Clear());
-    engine.pushDrawable(move4);
+    engine.pushDrawable(grp);
     engine.pushDrawable(fpsMeter);
 }
 
